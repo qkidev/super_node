@@ -12,8 +12,8 @@ interface node {
 
 contract super_node {
     struct User {
-        uint256 deposit;
-        uint256 withdraw;
+        uint256 deposit;//累计存入qki数量
+        uint256 withdraw;//累计提现qki数量
     }
 
     string public name     = "super node";
@@ -69,7 +69,7 @@ contract super_node {
             balanceOf[user] += stake;
             totalSupply += stake;
         }
-        users[user].deposit += msg.value;
+        users[user].deposit += msg.value;//累计存入qki数量
         emit Deposit(user, msg.value);
         return true;
     }
@@ -81,13 +81,14 @@ contract super_node {
         require(getPrice() >= withdrawPrice,"Price");
         
         balanceOf[msg.sender] -= stake;
-        uint qki = address(this).balance * stake / totalSupply;
+        uint qki = address(this).balance * stake / totalSupply;//根据stake占比取当前合约余额
         msg.sender.transfer(qki);
-        totalSupply -= stake;
-        users[msg.sender].withdraw += qki;
+        totalSupply -= stake;//销毁stake
+        users[msg.sender].withdraw += qki;//累计提现qki数量
         Withdrawal(msg.sender, qki);
     }
     
+    //升级到下一个池子
     function upgrade(uint stake)public returns (bool ) {
         require(next_pool != address(0));
         require(stake > 0);
@@ -95,10 +96,10 @@ contract super_node {
  
         
         balanceOf[msg.sender] -= stake;
-        uint qki = address(this).balance * stake / totalSupply;
-        totalSupply -= stake;
+        uint qki = address(this).balance * stake / totalSupply;//根据stake占比取当前合约余额
+        totalSupply -= stake;//销毁stake
         (bool success,  ) = address(next_pool).call{value:qki}(abi.encodeWithSignature("deposit(address)", msg.sender));
-        users[msg.sender].withdraw += qki;
+        users[msg.sender].withdraw += qki;//累计提现qki数量
         emit upgraded(msg.sender,qki);
         return success;
     }

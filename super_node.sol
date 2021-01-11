@@ -30,8 +30,10 @@ contract super_node {
     event  Deposit(address indexed dst, uint wad);
     event  Withdrawal(address indexed src, uint wad);
     event Received(address, uint);
+    event upgraded(address, uint);
 
     mapping (address => uint) public  balanceOf;
+    mapping(address => User) public users;
     
     constructor(uint price) {
         withdrawPrice = price;
@@ -67,6 +69,7 @@ contract super_node {
             balanceOf[user] += stake;
             totalSupply += stake;
         }
+        users[user].deposit += msg.value;
         emit Deposit(user, msg.value);
         return true;
     }
@@ -81,6 +84,7 @@ contract super_node {
         uint qki = address(this).balance * stake / totalSupply;
         msg.sender.transfer(qki);
         totalSupply -= stake;
+        users[msg.sender].withdraw += qki;
         Withdrawal(msg.sender, qki);
     }
     
@@ -92,9 +96,10 @@ contract super_node {
         
         balanceOf[msg.sender] -= stake;
         uint qki = address(this).balance * stake / totalSupply;
-        msg.sender.transfer(qki);
         totalSupply -= stake;
         (bool success,  ) = address(next_pool).call{value:qki}(abi.encodeWithSignature("deposit(address)", msg.sender));
+        users[msg.sender].withdraw += qki;
+        emit upgraded(msg.sender,qki);
         return success;
     }
 

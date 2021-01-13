@@ -1,0 +1,204 @@
+
+  
+$minFontSize: 20px;
+$smallestFontSize: 22px;
+$smallerFontSize: 24px;
+$smallFontSize: 26px;
+$normalFontSize: 28px;
+$middleFontSize: 30px;
+$bigFontSize: 34px;
+$bigerFontSize: 38px;
+$biggestFontSize: 46px;
+$hugeFontSize: 50px;
+$hugerFontSize: 80px;
+$hugestFontSize: 76px;
+
+$inverse_color: #fff;
+$input_color: #EBEBEB;
+$font_color: #333;
+$bg_color: #f5f5f5;
+$grey_color: #B3B3B3;
+$grey2_color: #D1D1D1;
+$black_color: #000000;
+$red_color: #FF5746;
+$main_color-inverse: #ffcdcd;
+$main_color: #262455;
+$main2_color: #232150;
+$main_inverse_color: #8480D4;
+
+.smallestInverseTxt{
+  color: $inverse_color;
+  font-size: $smallestFontSize;
+}
+.smallestBlackTxt{
+  color: $black_color;
+  font-size: $smallestFontSize;
+}
+.smallestMainInverseThinTxt{
+  color: $main_inverse_color;
+  font-size: $smallestFontSize;
+  font-weight: 200;
+}
+.smallerInverseThinTxt{
+  color: $inverse_color;
+  font-size: $smallerFontSize;
+  font-weight: 200;
+}
+.smallerInverseTxt{
+  color: $inverse_color;
+  font-size: $smallerFontSize;
+}
+.smallInverseTxt{
+  color: $inverse_color;
+  font-size: $smallFontSize;
+}
+.smallInverseThinTxt{
+  color: $inverse_color;
+  font-size: $smallFontSize;
+  font-weight: 200;
+}
+.smallGrey2Txt{
+  color: $grey2_color;
+  font-size: $smallFontSize;
+}
+.normalInverseBoldTxt{
+  color: $inverse_color;
+  font-size: $normalFontSize;
+  font-weight: 800;
+}
+// .bigFontSize
+.bigFontThinTxt{
+  color: $font_color;
+  font-size: $bigFontSize;
+  font-weight: 300;
+}
+.middleInverseTxt{
+  color: $inverse_color;
+  font-size: $middleFontSize;
+}
+.biggerInverseThinTxt{
+  color: $inverse_color;
+  font-size: $bigerFontSize;
+  font-weight: 200;
+}
+.biggestInverseThinTxt{
+  color: $inverse_color;
+  font-size: $biggestFontSize;
+  font-weight: 200;
+}
+.hugestInverseBoldTxt{
+  color: $inverse_color;
+  font-size: $hugestFontSize;
+  font-weight: 800;
+}
+
+.flex_h{
+	display: flex;
+	flex-direction: row;
+}
+.flex_v{
+	display: flex;
+	flex-direction: column;
+}
+.flex_h_center{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.flex_v_center{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.flex_v_end{
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+.flex_h_center_center{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+.flex_h_between{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+.flex1{
+	flex: 1;
+}
+.flex2{
+	flex: 2;
+}
+.alignLeft{
+  text-align: left;
+}
+  /*省略号*/
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+  /*美化滚动条*/
+.scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #ddd;
+  }
+  &::-webkit-scrollbar-button {
+    display: block;
+    width: 1px;
+    height: 1px;
+  }
+  &.auto-hide::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: transparent;
+  }
+
+  &.auto-hide {
+    &:hover::-webkit-scrollbar-thumb {
+      background-color: #c3c3c3;
+    }
+    &:hover::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+  }
+}
+
+::placeholder{
+  color: $grey2_color;
+  font-size: $smallestFontSize;
+  font-weight: 500;
+}
+
+// 二倍图和三倍图的处理
+@mixin bg-img($url) {
+  background-image: url($url+".png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  @media (-webkit-min-device-pixel-ratio:3),(min-device-pixel-ratio:3) {
+    background-image: url($url+".png");
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+.input_grey{
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+}

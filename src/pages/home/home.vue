@@ -126,91 +126,21 @@
     <!-- 选择星球 -->
     <div class="bg" v-show="togglePoolShow">
       <div class="flex-box">
-        <div class="box flex_v_center">
+        <div class="box1 flex_v_center">
           <img src="../../assets/pool_bg.png" class="pool_model_bg" mode />
           <div class="align-center mt_50">
             <div class="bigFontThinTxt">选择星球池</div>
           </div>
-          
+          <div class="pool_list flex_h_between mt_65" style="flex-wrap: wrap; width: 100%">
+            <div :class="['pool_item', 'flex_h_center_center', currPool === item ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index">
+              {{item}}U 星球池
+              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="currPool === item">
+            </div>
+          </div>
           <div class="submit_btn flex_h_center_center middleInverseTxt">
             确定切换
           </div>
           <div class="smallGrey2Txt" @click="storeShow = false">取消切换</div>
-        </div>
-      </div>
-    </div>
-    <!-- 燃烧原料 -->
-    <div class="bg" v-show="showBurnFlag">
-      <div class="flex-box">
-        <div class="box1">
-          <div class="align-center">
-            <!-- <img src="../../assets/rs.png" class="rs" mode /> -->
-            <div class="text">燃烧原料</div>
-          </div>
-          <div class="text1 alignLeft">
-            可用余额
-            <span class="smallMainTxt">{{ balance }}</span>burn
-          </div>
-          <div class="input-box space-between">
-            <input type="text" class="input" value placeholder="输入燃烧数量" v-model="amount" />
-            <div class="align-center">
-              <div class="text2">burn</div>
-              <div class="line"></div>
-              <div class="text3" @click="inputAll">全部</div>
-            </div>
-          </div>
-          <div class="tit alignLeft">* 确定提交后你燃烧的余额将销毁变成3倍算力</div>
-          <div class="flex-box btn" @click="burn">确定燃烧</div>
-          <div class="text4" @click="showBurnFlag = false">取消</div>
-        </div>
-      </div>
-    </div>
-    <!-- 挖取矿产 -->
-    <div class="bg" v-show="bgShow">
-      <div class="flex-box">
-        <div class="box1">
-          <div class="align-center">
-            <!-- <img src="../../assets/wq.png" class="wq" mode /> -->
-            <div class="text">挖取矿产</div>
-          </div>
-          <div class="text5">
-            <span>152152.311</span>
-            <br />待更新通证算力
-          </div>
-          <div class="tit tit1">我当前通证算力总量：{{ power }}</div>
-          <div class="flex-box btn">增加更新</div>
-          <div class="text4" @click="bgShow = false">取消</div>
-        </div>
-      </div>
-    </div>
-    <!-- 领取收益弹框 -->
-    <div class="bg" v-show="incomeFlag">
-      <div class="flex-box">
-        <div class="box1">
-          <div class="align-center">
-            <!-- <img src="../../assets/lqjl.png" class="lq" mode /> -->
-            <div class="text">领取收益</div>
-          </div>
-          <div class="text5" v-if="receiveAble">
-            <span class="hugeMainTxt">{{ expectAmount }}</span>
-            <br />burn
-          </div>
-          <div class="time-box" v-else>
-            <div class="time" v-for="(item, index) in hour" :key="'1_' + index">{{ item }}</div>
-
-            <div class="bi">:</div>
-            <div class="time" v-for="(item, index) in minutes" :key="'2_' + index">{{ item }}</div>
-            <div class="bi">:</div>
-            <div class="time" v-for="(item, index) in seconds" :key="'3_' + index">{{ item }}</div>
-          </div>
-          <div class="last-time" v-if="!receiveAble">上次领取奖励：{{ receiveTime }}</div>
-          <!-- <div class="tit tit1">* 产出收益最多保留5天</div> -->
-          <div class="tit tit1 tit2">* 等级达到Lv2,产出收益最多累计5天</div>
-          <div
-            :class="['flex-box', receiveAble ? 'btn' : 'btn-disable']"
-            @click="getReceiveIncome"
-          >{{ receiveAble ? "确定领取" : "明日再来" }}</div>
-          <div class="text4" @click="incomeFlag = false">取消</div>
         </div>
       </div>
     </div>
@@ -261,6 +191,8 @@ export default {
       decimals: 2, //精度
 
       poolLevel: 5,
+      poolList: [5, 10, 20, 40],
+      currPool: 5,
     };
   },
   async created() {
@@ -754,173 +686,29 @@ export default {
     border-radius: 59px;
     margin-bottom: 25px;
   }
-.head {
-  // width: 100%;
-  // height: 500px;
-  // background: url(../../assets/bj.png) no-repeat;
-  // background-size: 100% 100%;
-  // padding-top: 100px;
-  // position: relative;
-  // box-sizing: border-box;
-  .my {
-    margin-left: 101px;
-
-    .huo {
-      width: 93px;
-      height: 104px;
+  .pool_item{
+    width: calc((100% - 30px)/2);
+    padding-top: 36px;
+    padding-bottom: 36px;
+    border: 1px solid #D1D1D1;
+    border-radius: 80px;
+    margin-bottom: 60px;
+    position: relative;
+    color: #D1D1D1;
+    font-size: 30px;
+    &.currItem{
+      border: 1px solid #FF5746;
+      color: #FF5746;
     }
-
-    .right {
-      margin-left: 29px;
-      margin-top: -10px;
-
-      .num {
-        font-size: 58px;
-        color: #fff;
-        font-weight: bold;
-      }
-
-      .align-center {
-        .lv {
-          width: 44px;
-          height: 28px;
-          margin-left: 10px;
-        }
-
-        .text {
-          font-size: 26px;
-          color: #ffcdcd;
-          margin-left: 11px;
-        }
-      }
+    .img{
+      position: absolute;
+      width: 51px;
+      height: 51px;
+      left: 50%;
+      top: -25px;
+      transform: translateX(-50%);
     }
   }
-
-  .money {
-    margin-top: 70px;
-    padding: 0 110px;
-
-    .item {
-      text-align: center;
-
-      .img {
-        width: 33px;
-        height: 31px;
-      }
-
-      .img1 {
-        width: 25px;
-        height: 33px;
-      }
-
-      .text {
-        font-size: 24px;
-        color: #ffcdcd;
-        margin-left: 10px;
-      }
-
-      .num {
-        font-size: 26px;
-        color: #fff;
-        font-weight: bold;
-        margin-top: 10px;
-      }
-    }
-  }
-
-  
-}
-
-.cont {
-  width: 100%;
-  background: #ffffff;
-  box-shadow: 0px -27px 81px 0px rgba(0, 0, 0, 0.02);
-  border-radius: 35px 35px 0px 0px;
-  margin-top: -28px;
-  position: relative;
-  padding-top: 103px;
-  padding-bottom: 100px;
-  .tab {
-    padding: 0 58px;
-
-    .item {
-      text-align: center;
-
-      .img {
-        width: 116px;
-        height: 116px;
-      }
-
-      .text {
-        font-size: 26px;
-        color: #737278;
-        margin-top: 16px;
-      }
-    }
-  }
-
- 
-
-  .my-box {
-    margin-top: 60px;
-    padding: 0 48px;
-
-    .img {
-      width: 26px;
-      height: 35px;
-    }
-
-    .img1 {
-      width: 30px;
-      height: 30px;
-    }
-
-    .text {
-      font-size: 24px;
-      color: #b09b99;
-      margin-left: 14px;
-    }
-
-    .text1 {
-      font-size: 24px;
-      color: #7d7d82;
-    }
-
-    .copy {
-      width: 100%;
-      height: 65px;
-      background: #fff1ef;
-      border-radius: 21px;
-      padding: 0 45px 0 42px;
-      margin-top: 26px;
-      box-sizing: border-box;
-      &.copy1 {
-        height: 102px;
-        background: #f3f3f3;
-        padding: 0 33px 0 40px;
-      }
-
-      .flex-box {
-        width: 156px;
-        height: 62px;
-        background: #dc5242;
-        border-radius: 16px;
-        font-size: 24px;
-        color: #fff;
-      }
-
-      .num {
-        font-size: 20px;
-        color: #737278;
-      }
-
-      .copy-img {
-        width: 34px;
-        height: 34px;
-      }
-    }
-  }
-}
 
 .bg {
   width: 100%;
@@ -934,7 +722,14 @@ export default {
   .flex-box {
     width: 100%;
     height: 100%;
-
+    .pool_model_bg{
+      width: 215px;
+      height: 215px;
+      position: absolute;
+      left: 50%;
+      top: -100px;
+      transform: translateX(-50%);
+    }
     .box {
       width: 654px;
       height: 673px;
@@ -951,14 +746,6 @@ export default {
         top: -100px;
         transform: translateX(-50%);
       }
-      .pool_model_bg{
-        width: 215px;
-        height: 215px;
-        position: absolute;
-        left: 50%;
-        top: -100px;
-        transform: translateX(-50%);
-      }
       .rocket_bg{
         width: 95px;
         height: 274px;
@@ -968,173 +755,21 @@ export default {
         top: -160px;
         transform: translateX(-50%);
       }
-
-      .text {
-        font-size: 38px;
-        color: #7d7d82;
-        margin-left: 10px;
-        font-weight: bold;
-      }
-
-      .text1 {
-        font-size: 26px;
-        color: #7d7d82;
-        margin-top: 30px;
-        line-height: 37px;
-
-        .tit {
-          font-weight: 600;
-        }
-
-        .lv {
-          color: #dc5242;
-          padding-right: 10px;
-          padding-left: 10px;
-
-          &.first {
-            padding-left: 0;
-          }
-        }
-      }
-
-      .btn {
-        width: 100%;
-        height: 120px;
-        background: #dc5242;
-        border-radius: 20px;
-        font-size: 32px;
-        color: #fff;
-        margin-top: 50px;
-      }
     }
 
     .box1 {
       margin-left: 50px;
       margin-right: 50px;
-
       width: 100%;
-      // height: 699px;
       background: #ffffff;
       border-radius: 20px;
       padding: 71px 56px 71px 56px;
-      .rs {
-        width: 30px;
-        height: 45px;
-      }
-      .lq {
-        width: 42px;
-        height: 38px;
-      }
-      .wq {
-        width: 40px;
-        height: 40px;
-      }
-      .text {
-        font-size: 38px;
-        color: #7d7d82;
-        font-weight: bold;
-        margin-left: 13px;
-      }
-      .text1 {
-        font-size: 26px;
-        color: #b9b9b9;
-        font-weight: 500;
-        margin-top: 13px;
-        uni-text {
-          color: #dc5242;
-        }
-      }
-
-      .text2 {
-        font-size: 26px;
-        color: #b9b9b9;
-        font-weight: bold;
-      }
+      position: relative;
       .line {
         width: 1px;
         height: 51px;
         background: #d8d8d8;
         margin: 0 13px;
-      }
-      .text3 {
-        font-size: 26px;
-        font-weight: 500;
-        color: #dc5242;
-      }
-      .tit {
-        font-size: 24px;
-        color: #dc5242;
-        font-weight: 500;
-        margin-top: 73px;
-        &.tit1 {
-          text-align: center;
-        }
-        &.tit2 {
-          margin-top: 26px;
-        }
-      }
-      .btn {
-        width: 100%;
-        height: 120px;
-        background: #dc5242;
-        border-radius: 20px;
-        font-size: 32px;
-        color: #fff;
-        margin-top: 28px;
-      }
-      .btn-disable {
-        width: 100%;
-        height: 120px;
-        background: #ccc;
-        border-radius: 20px;
-        font-size: 32px;
-        color: #fff;
-        margin-top: 50px;
-      }
-      .text4 {
-        text-align: center;
-        font-size: 32px;
-        color: #b9b9b9;
-        margin-top: 34px;
-      }
-      .text5 {
-        text-align: center;
-        font-size: 24px;
-        color: #b9b9b9;
-        margin-top: 80px;
-        uni-text {
-          font-size: 50px;
-          color: #dc5242;
-          font-weight: 500;
-        }
-      }
-      .time-box {
-        margin-top: 50px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .time {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 77px;
-          height: 100px;
-          background: #f3f3f3;
-          border-radius: 19px;
-          font-size: 50px;
-          color: #7d7d82;
-          font-weight: bold;
-        }
-        .bi {
-          font-size: 35px;
-          color: #7d7d82;
-        }
-      }
-      .last-time {
-        text-align: center;
-        margin-top: 60px;
-        font-size: 22px;
-        color: #c0c0c0;
       }
     }
   }

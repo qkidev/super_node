@@ -1,18 +1,18 @@
 <template>
   <div class="container">
     <div class="head flex_v_center">
-      <div class="flex_v_end">
+      <div style="align-self: flex-end; margin-top: 5px; margin-bottom: 5px">
         <div class="rule_bg flex_h_center_center normalInverseBoldTxt">规则</div>
       </div>
       <img :src="require('../../assets/logo1.png')" alt="" class="logo1" />
       <img :src="require('../../assets/logo2.png')" alt="" class="logo2" />
-      <div class="pool_bg flex_h_center_center mt_65 hugestInverseBoldTxt">{{poolLevel}}U</div>
+      <div class="pool_bg flex_h_center_center mt_50 hugestInverseBoldTxt" @click="togglePoolShow = true">{{currPool}}U</div>
       <div class="flex_h mt_15">
         <img :src="require('../../assets/toggle.png')" alt="" class="toggle_icon"/>
         <span class="smallestInverseTxt" style="opacity: 0.4">点击星球切换星球池</span>
       </div>
-      <div class="smallInverseTxt mt_85">当前合约地址内余额</div>
-      <div class="biggestInverseThinTxt mt_30">225,486.2789</div>
+      <div class="smallInverseTxt mt_50">当前合约地址内余额</div>
+      <div class="biggestInverseThinTxt mt_20">{{totalSupply}}</div>
       <div class="smallInverseThinTxt mt_20">QKI</div>
     </div>
     <div class="hy">
@@ -22,37 +22,42 @@
       </div>
     </div>
     <!-- <div class="hr_v"></div> -->
-    <div class="flex_h">
-      <div class="flex_v_center flex1">
+    <div class="flex_h_center">
+      <div class="flex_v_center_center flex1">
         <div class="smallInverseTxt">凭证数量</div>
-        <div class="biggestInverseThinTxt mt_50">100.00</div>
+        <div class="biggestInverseThinTxt mt_50">{{balance}}</div>
       </div>
       <div class="hr_h"></div>
        <div class="flex_v_center flex1">
         <div class="smallInverseTxt">存入数量(QKI)</div>
-        <div class="biggestInverseThinTxt mt_50">100.00</div>
+        <div class="biggestInverseThinTxt mt_50">{{storeAmount}}</div>
       </div>
     </div>
     <div class="hr_v"></div>
     <div class="flex_h">
       <div class="smallInverseTxt flex1">当前QKI价格</div>
       <div class="flex1">
-        <span class="biggerInverseThinTxt">100.00</span>
+        <span class="biggerInverseThinTxt">{{price}} </span>
         <span class="smallerInverseThinTxt">USDT</span>
       </div>
     </div>
     <div class="fixed_bottom_placeholder"></div>
-    <div class="fixed_bottom flex_v">
-     <div class="flex_h_between ">
-       <div class="withdraw_btn flex_h_center_center smallerInverseTxt">立即提现</div>
-       <div class="store_btn flex_h_center_center smallerInverseTxt">立即存入</div>
+    <div class="fixed_bottom flex_v" v-if="true">
+     <div class="flex_h_between">
+       <div class="withdraw_btn flex_h_center_center smallerInverseTxt" @click="withDrawShow = true">立即提现</div>
+       <div class="store_btn flex_h_center_center smallerInverseTxt" @click="storeShow = true">立即存入</div>
      </div>
      <div class="flex_h_between mt_65">
-       <span class="smallestMainInverseThinTxt">* 当价格到达5 USDT可进行提现</span>
-       <div class="">
+       <span class="smallestMainInverseThinTxt">* 当价格到达{{withdrawPrice}} USDT可进行提现</span>
+       <div class="flex_h_center" @click="upgredeShow = true">
          <img :src="require('../../assets/upgrade.png')" alt="" class="upgrade_btn">
          <span class="smallestInverseTxt">升级到10U星球池</span>
        </div>
+     </div>
+    </div>
+    <div class="fixed_bottom flex_v" v-else>
+     <div class="flex_h_center_center">
+       <div class="store_btn flex_h_center_center smallerInverseTxt" @click="startPoolShow=true">开启你的星球池</div>
      </div>
     </div>
 
@@ -72,7 +77,7 @@
               <div class="smallestBlackTxt">QKI</div>
             </div>
           </div>
-          <div class="submit_btn flex_h_center_center middleInverseTxt">
+          <div class="submit_btn flex_h_center_center middleInverseTxt" @click="withDraw">
             确定提现
           </div>
           <div class="smallGrey2Txt" @click="withDrawShow = false">取消切换</div>
@@ -94,7 +99,7 @@
               <div class="smallestBlackTxt" @click="inputAll">全部</div>
             </div>
           </div>
-          <div class="submit_btn flex_h_center_center middleInverseTxt">
+          <div class="submit_btn flex_h_center_center middleInverseTxt" @click="upgrade">
             确定升级
           </div>
           <div class="smallGrey2Txt" @click="upgredeShow = false">取消升级</div>
@@ -116,14 +121,14 @@
               <div class="smallestBlackTxt">QKI</div>
             </div>
           </div>
-          <div class="submit_btn flex_h_center_center middleInverseTxt">
+          <div class="submit_btn flex_h_center_center middleInverseTxt" @click="store">
             确定存入
           </div>
           <div class="smallGrey2Txt" @click="storeShow = false">取消存入</div>
         </div>
       </div>
     </div>
-    <!-- 选择星球 -->
+    <!-- 切换星球 -->
     <div class="bg" v-show="togglePoolShow">
       <div class="flex-box">
         <div class="box1 flex_v_center">
@@ -132,15 +137,43 @@
             <div class="bigFontThinTxt">选择星球池</div>
           </div>
           <div class="pool_list flex_h_between mt_65" style="flex-wrap: wrap; width: 100%">
-            <div :class="['pool_item', 'flex_h_center_center', currPool === item ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index">
-              {{item}}U 星球池
-              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="currPool === item">
+            <div :class="['pool_item', 'flex_h_center_center', currPool === item.amount ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index">
+              {{item.amount}}U 星球池
+              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="currPool === item.amount">
             </div>
           </div>
-          <div class="submit_btn flex_h_center_center middleInverseTxt">
+          <div class="submit_btn flex_h_center_center middleInverseTxt" @click="togglePool">
             确定切换
           </div>
-          <div class="smallGrey2Txt" @click="storeShow = false">取消切换</div>
+          <div class="smallGrey2Txt" @click="togglePoolShow = false">取消切换</div>
+        </div>
+      </div>
+    </div>
+    <!-- 开启星球 -->
+    <div class="bg" v-show="startPoolShow">
+      <div class="flex-box">
+        <div class="box1 flex_v_center">
+          <img src="../../assets/pool_bg.png" class="pool_model_bg" mode />
+          <div class="align-center mt_50">
+            <div class="bigFontThinTxt">选择星球池</div>
+          </div>
+          <div class="pool_list flex_h_between mt_65" style="flex-wrap: wrap; width: 100%">
+            <div :class="['pool_item', 'flex_h_center_center', currPool === item.amount ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index">
+              {{item.amount}}U 星球池
+              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="currPool === item.amount">
+            </div>
+          </div>
+          <div class="input-box space-between" style="margin-top: 0">
+            <input type="text" class="input" value placeholder="请输入你的存入数量" v-model="amount" />
+            <div class="align-center">
+              <div class="line"></div>
+              <div class="smallestBlackTxt">QKI</div>
+            </div>
+          </div>
+          <div class="submit_btn flex_h_center_center middleInverseTxt" @click="start">
+            确定开启
+          </div>
+          <div class="smallGrey2Txt" @click="startPoolShow = false">取消开启</div>
         </div>
       </div>
     </div>
@@ -151,30 +184,31 @@
 // import h5Copy from '../js_sdk/junyi-h5-copy/junyi-h5-copy/junyi-h5-copy.js'
 import { h5Copy, initEth, timeUtils, vertify } from "@/utils/utils";
 import { ethers } from "ethers";
-import { abi, abiPro } from "./abi";
+import { abi } from "./abi";
 import { Toast } from "vant";
-// 收益率,为了防止机器刷，LV1级qki余额大于1时，才能够拿到0.2%，否则拿到0.1%
-const RATE = ["0.002", "0.005", "0.006", "0.007", "0.008"];
 export default {
   data() {
     return {
-      contractAddress: "0xD3e9448D573963344f8cF6E95E6b072dc5b701C3", // 合约地址
+      contractAddress: "0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3", // 合约地址
       contract: null, // 当前的合约对象
       myAddress: "", // 我的地址
-      balance: "0.00", // 我的余额
-      // totalPower: "0",// 全网通证总量
-      totalSupply: "0", // 全网通证总量
+      balance: "0.00", // 当前星球的凭证数量
+      amount: '',
+      storeAmount: '0.00',
+      totalSupply: "0.00", // 全网通证总量
+      
       power: "0", // 我的算力
       level: 1,
       withDrawShow: false,
       bgShow: false,
       upgredeShow: false,
       storeShow: false,
-      togglePoolShow: true,
+      togglePoolShow: false,
+      startPoolShow: false,
       type: 1,
       epoch: 86400, // 挖矿周期
       inviteCount: "0", // 邀请的人数
-      receiveTimestamp: 0, // 上次领取奖励的时间戳
+      // receiveTimestamp: 0, // 上次领取奖励的时间戳
       receiveTime: "", // 上次领取奖励的时间
       inviteAddress: "", // 已绑定邀请人地址
       inviteAddressInput: "", // 输入邀请人的地址
@@ -186,37 +220,36 @@ export default {
       seconds: "00", // 秒
       showBurnFlag: false, // 燃烧算力弹框
       receiveAble: false, // 收益是否可以被领取
-      amount: "", // 燃烧数量
+      // amount: "", // 燃烧数量
       expectAmount: 0, // 预估收益
       decimals: 2, //精度
 
       poolLevel: 5,
-      poolList: [5, 10, 20, 40],
+      poolList: [{amount: 5, address: ''}, {amount: 100, address: ''}],
       currPool: 5,
+      withdrawPrice: 0.00,
+      price: '0.00',
+      next_pool: '',
     };
   },
   async created() {
-    this.contractAddress =
-      process.env.NODE_ENV == "development"
-        ? "0xD3e9448D573963344f8cF6E95E6b072dc5b701C3"
-        : "0x3FB708e854041673433e708feDb9a1b43905b6f7";
     await this.getAddress();
-    let currAbi = process.env.NODE_ENV == "development" ? abi : abiPro;
-    var contract = new ethers.Contract(
-      this.contractAddress,
-      currAbi,
-      this.signer
-    );
-    this.contract = contract;
+    // this.contractAddress = poolList[0].address
+    // var contract = new ethers.Contract(
+    //   this.contractAddress,
+    //   abi,
+    //   this.signer
+    // );
+    // this.contract = contract;
+    this.getContract()
     await this.getDecimals();
-    await this.getEpoch();
-    await this.getTotalSupply();
-    await this.getinviteCount();
-    await this.getReceiveTime();
-    await this.getRewardCount();
-    await this.getInviteAddress();
+    this.getTotalSupply();
     await this.getBalance();
-    await this.getPower();
+    this.geUsers();
+    if(this.storeAmount !== 0) {
+      this.getWithdrawPrice();
+      this.getNextPoolAddress();
+    }
   },
   mixins: [h5Copy, initEth, timeUtils, vertify],
   methods: {
@@ -224,30 +257,15 @@ export default {
       this.type = num;
       this.bgShow = true;
     },
-    // 展示领取收益
-    async showIncome() {
-      // 新用户且算力不为0，进入页面就可以领取一次收益
-      if (this.receiveTimestamp == 0) {
-        if (this.power != 0) {
-          this.receiveAble = true;
-          this.incomeFlag = true;
-          // 默认领取一天的收益，传入参数只要是小于epoch的任何一个数都可以
-          this.calcExpectAmount(10);
-        } else {
-          Toast("您当前还没有算力！");
-          return;
-        }
-      } else {
-        this.incomeFlag = true;
-        let nowTimeStr = Date.now()
-          .toString()
-          .substring(0, 10);
-        let distance = this.receiveTimestamp + this.epoch - Number(nowTimeStr);
-        // 如果distance大于0表示收益还不可以领取。需要计算倒计时
-        if (distance <= 0) {
-          this.calcExpectAmount(distance);
-        }
-      }
+    // 初始化合约
+    getContract (address) {
+      this.contractAddress = address
+      var contract = new ethers.Contract(
+        this.contractAddress,
+        abi,
+        this.signer
+      );
+      this.contract = contract;
     },
     async getAddress() {
       let [error, address] = await this.to(this.signer.getAddress());
@@ -268,166 +286,107 @@ export default {
       }
       return 0.0;
     },
-    // 得到余额
+    // TODO:得到凭证数量，切换星球的时候如何获取选择星球的凭证数量呐？
     async getBalance() {
       let [error, balance] = await this.to(
         this.contract.balanceOf(this.myAddress)
       );
       this.doResponse(error, balance, "balance", this.decimals);
     },
-    // 得到通证总量
+    // 得到合约的余额
     async getTotalSupply() {
       let [error, res] = await this.to(this.contract.totalSupply());
       this.doResponse(error, res, "totalSupply", this.decimals);
+    },
+    // 获得解锁价格
+    async getWithdrawPrice() {
+      let [error, res] = await this.to(this.contract.withdrawPrice());
+      this.doResponse(error, res, "withdrawPrice", this.decimals);
+    },
+    // 获取下一个可升级的星球池
+    async getNextPoolAddress() {
+      let [error, res] = await this.to(this.contract.next_pool());
+      this.doResponse(error, res, "", this.decimals);
+    },
+    // 获得用户的累计存入数量
+    async geUsers() {
+      let [error, res] = await this.to(this.contract.users(this.myAddress));
+      console.log("geUsers======", error, res)
+      // this.doResponse(error, res, "withdrawPrice", this.decimals);
+    },
+    // 获得当前价格
+    async getPrice() {
+      let [error, res] = await this.to(this.contract.getPrice());
+      console.log("getPrice======", error, res)
+      // qusdt的精度为6
+      // this.doResponse(error, res, "withdrawPrice", 6);
     },
     // 得到精度
     async getDecimals() {
       let [error, res] = await this.to(this.contract.decimals());
       this.doResponse(error, res, "decimals");
     },
-    // 得到个人算力
-    async getPower() {
-      let [error, res] = await this.to(this.contract.power(this.myAddress));
-      this.doResponse(error, res, "power", this.decimals);
-    },
-    // 获取累计收益
-    async getRewardCount() {
-      let [error, res] = await this.to(
-        this.contract.rewardCount(this.myAddress)
-      );
-      this.doResponse(error, res, "rewardCount", this.decimals);
-    },
-    // 获取上次领取奖励的时间
-    // 注：这个方法必须调用在getEpoch方法之后，因为他们两个共同影响倒计时的逻辑
-    async getReceiveTime() {
-      let [error, res] = await this.to(
-        this.contract.last_miner(this.myAddress)
-      );
-      this.doResponse(error, res, "receiveTimestamp");
-    },
-    // 获取挖矿周期
-    async getEpoch() {
-      let [error, res] = await this.to(this.contract.epoch());
-      this.doResponse(error, res, "epoch");
-    },
-    // 获取邀请人数
-    async getinviteCount() {
-      let [error, res] = await this.to(
-        this.contract.inviteCount(this.myAddress)
-      );
-      this.doResponse(error, res, "inviteCount");
-    },
-    // 获取绑定人信息
-    async getInviteAddress() {
-      let [error, res] = await this.to(this.contract.invite(this.myAddress));
-      if (this.doResponse(error, res)) {
-        if (res == "0x0000000000000000000000000000000000000000") {
-          res = "";
-        }
-        this.inviteAddress = res;
-      }
-    },
-    // 绑定邀请人。
-    async registration() {
-      if (this.inviteAddressInput == "") {
-        Toast("请输入绑定邀请的地址");
-        return;
-      }
-      if(this.inviteAddressInput.toLowerCase() == this.myAddress.toLowerCase()){
-         Toast("不能绑定自己！");
-          this.inviteAddressInput = '';
-        return;
-      }
-      if (this.inviteAddressInput.toLowerCase() == this.contractAddress.toLowerCase()) {
-        Toast("不能绑定合约地址为邀请人！");
-        this.inviteAddressInput = '';
-        return;
-      }
-
-      // TODO: 如何验证地址的合法性？？
-      let [error, res] = await this.to(
-        this.contract.registration(this.inviteAddressInput)
-      );
-      if (this.doResponse(error, res)) {
-        Toast("绑定成功");
-        this.inviteAddress = this.inviteAddressInput;
-      }
-    },
-    // 燃烧
-    async burn() {
+    // 处理工单
+    async dealOrder(type, modelKeyName) {
       if (this.amount == "") {
-        Toast("请输入您的燃烧数量");
+        Toast("请输入您的存入的数量");
         return;
       }
-      let burn_amount =
-        ethers.FixedNumber.from(this.amount.toString()) * 10 ** this.decimals;
-      let [error, res] = await this.to(this.contract.burn(burn_amount));
+      let amount =
+        ethers.FixedNumber.from(this.amount.toString()) * 10 ** 18;
+      let response;
+      if(type === 'start') {
+        response = await this.to(this.contract.deposit(amount))
+      } else if (type === 'upgrade') {
+        response = await this.to(this.contract.upgrade(amount))
+      } else if( type === 'withdraw') {
+        response = await this.to(this.contract.withdraw(amount))
+      } else if(type === 'store') {
+        response = await this.to(this.contract.deposit(amount))
+      }
+      let [error, res] = response;
       if (this.doResponse(error, res)) {
-        this.showBurnFlag = false;
-        Toast("操作成功");
-        await this.queryTransation(res.hash);
+        this[modelKeyName] = false;
+        this.amount = '';
+        Toast("提交请求成功，等待区块确认");
+        await this.queryTransation(res.hash, () => {
+          this.getTotalSupply();
+          this.getBalance();
+          this.geUsers();
+          this.getWithdrawPrice();
+          this.getNextPoolAddress();
+        });
       }
     },
-    // 领取挖矿收益
-    async getReceiveIncome() {
-      if (!this.receiveAble) {
-        Toast("您今天已经领取过收益了,明天再来！");
-        return;
-      }
-      let [error, res] = await this.to(this.contract.mint());
-      if (this.doResponse(error, res, "")) {
-        this.incomeFlag = false;
-        Toast("收益领取成功！");
-        await this.queryTransation(res.hash, true);
-      }
+    // 开启星球 TODO: 如何给所选星球存入数量
+    async start() {
+      this.dealOrder('start', 'startPoolShow')
     },
-    // 查询Transaction
-    async queryTransation(hash, updateTime) {
-      await this.provider.waitForTransaction(hash).then(async receipt => {
-        Toast("区块打包成功", receipt);
-        await this.getBalance();
-        await this.getPower();
-        await this.getTotalSupply();
-        if (updateTime) {
-          await this.getRewardCount();
-          await this.getEpoch();
-          await this.getReceiveTime();
-        }
-      });
+    // 切换星球
+    async togglePool() {
+      this.contractAddress = this.currPool
+      var contract = new ethers.Contract(
+        this.contractAddress,
+        abi,
+        this.signer
+      );
+      this.contract = contract;
+      this.getTotalSupply();
+      this.getBalance();
+      this.geUsers();
+      this.getWithdrawPrice();
     },
-    async calcExpectAmount(distance) {
-      // 计算阶段奖励
-      let currRate = "0.001";
-      if (this.level == 1) {
-        let balance = await this.getQkiBalance();
-        if (balance < 1) {
-          currRate = "0.001";
-        } else {
-          currRate = RATE[this.level - 1];
-        }
-      } else {
-        currRate = RATE[this.level - 1];
-      }
-      // 奖励是否过期
-      let day = Math.floor(Math.abs(distance) / this.epoch);
-      day = day + 1;
-      // let expectAmount = this.accMul(this.power, currRate);
-      if (this.timestampToTime == 0) {
-        day = 1;
-      } else {
-        if (this.level == 1) {
-          if (day > 1) {
-            day = 1;
-          }
-        } else {
-          if (day > 5) {
-            day = 5;
-          }
-        }
-      }
-
-      // let par1 =
-      this.expectAmount = this.accMul(this.accMul(this.power, currRate), day);
+    // 升级星球
+    async upgrade() {
+      this.dealOrder('upgrade', 'upgredeShow')
+    },
+    // 存入
+    async store() {
+      this.dealOrder('store', 'storeShow')
+    },
+    // 提现
+    async withDraw() {
+      this.dealOrder('withdraw', 'withDrawShow')
     },
     // 十六进制转10进制
     hex2int(hex) {
@@ -453,7 +412,7 @@ export default {
     },
     // response公共处理方法
     doResponse(error, res, keyName, Decimal = 0) {
-      // console.log(keyName+'================', error, res);
+      console.log(keyName+'================', error, res);
       if (error == null) {
         if (keyName) {
           let hex = ethers.utils.hexValue(res);
@@ -482,15 +441,6 @@ export default {
       this.active = num;
     }
   },
-  // computed: {
-  //   receiveAble: function(){
-  //     // 获取当前时间
-  //     let nowTimeStr = Date.now()
-  //       .toString()
-  //       .substring(0, 10);
-  //     return Number(nowTimeStr) - (this.receiveTimestamp + this.epoch) > 0
-  //   }
-  // },
   watch: {
     power(newPower) {
       if (newPower < 500) {
@@ -505,27 +455,6 @@ export default {
         this.level = 5;
       }
     },
-    receiveTimestamp(newTime) {
-      if (newTime != 0) {
-        this.receiveTime = this.timestampToTime(this.receiveTimestamp);
-      }
-      // 获取当前时间
-      let nowTimeStr = Date.now()
-        .toString()
-        .substring(0, 10);
-      // 如果distance大于0表示收益还不可以领取。需要计算倒计时
-      let distance = this.receiveTimestamp + this.epoch - Number(nowTimeStr);
-      if (distance > 0) {
-        this.countDown(distance, () => {
-          this.calcExpectAmount(distance);
-          this.receiveAble = true;
-        });
-        this.receiveAble = false;
-      } else {
-        this.calcExpectAmount(distance);
-        this.receiveAble = true;
-      }
-    }
   }
 };
 </script>
@@ -558,7 +487,7 @@ export default {
 .head{
   background-image: url('../../assets/bg.png');
   background-repeat: no-repeat;
-  width: 100%;
+  // width: 100%;
   height: 821px;
   background-size: 100% 100%;
 }
@@ -591,7 +520,7 @@ export default {
 .upgrade_btn{
   width: 40px;
   height: 40px;
-  margin-left: 13px;
+  margin-right: 8px;
 }
 .pool_bg{
   background-image: url('../../assets/pool_bg.png');
@@ -639,6 +568,10 @@ export default {
   height: 90px;
   width: 2px;
   background: rgba(235, 233, 237, .4);
+}
+.fixed_bottom_placeholder{
+  width: 100%;
+  height: 360px;
 }
 .fixed_bottom{
   position: fixed;

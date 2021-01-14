@@ -156,6 +156,18 @@ const initEth = {
     to(fnPromise){
       return fnPromise.then(res => [null, res]).catch(error => [error]);
     },
+    // 查询Transaction,完成后回调
+    async queryTransation (hash, fnCallback) {
+      await this.provider.waitForTransaction(hash).then(async receipt => {
+        console.log(receipt)
+        if (receipt.status === 0) {
+          Toast('合约调用失败', receipt)
+        } else {
+          Toast('合约调用成功', receipt)
+        }
+        fnCallback && fnCallback()
+      })
+    },
   }
 }
 

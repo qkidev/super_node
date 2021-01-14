@@ -105,6 +105,11 @@ $main_inverse_color: #8480D4;
 	flex-direction: row;
 	align-items: center;
 }
+.flex_h_end{
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+}
 .flex_v_center{
 	display: flex;
 	flex-direction: column;

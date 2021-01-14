@@ -1,4 +1,5 @@
 import { Toast } from 'vant';
+import Big from 'big.js'
 const h5Copy = {
   methods: {
     h5Copy(content) {
@@ -241,9 +242,46 @@ const timeUtils = {
   }
 }
 
+Big.DP = 18
+Big.NE = -19
+
+window.Big = Big
+
+const Decimal = {
+  add (a, b) {
+    try {
+      return Big(a).add(Big(b))
+    } catch {
+      console.log('')
+    }
+  },
+  sub (a, b) {
+    try {
+      return Big(a).sub(Big(b))
+    } catch {
+      console.log('')
+    }
+  },
+  mul (a, b) {
+    try {
+      return Big(a).mul(Big(b))
+    } catch {
+      console.log('')
+    }
+  },
+  div (a, b) {
+    try {
+      return Big(a).div(Big(b))
+    } catch {
+      console.log('')
+    }
+  },
+}
+
 export {
 	h5Copy,
   vertify,
   initEth,
-  timeUtils
+  timeUtils,
+  Decimal
 }

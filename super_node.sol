@@ -14,6 +14,8 @@ contract super_node {
     struct User {
         uint256 deposit;//累计存入qki数量
         uint256 withdraw;//累计提现qki数量
+        uint256 depositUsdtValue;//usdt价值
+        uint256 withdrawtUsdtValue;//usdt价值
     }
 
     string public name     = "super node";
@@ -70,6 +72,7 @@ contract super_node {
             totalSupply += stake;
         }
         users[user].deposit += msg.value;//累计存入qki数量
+        users[user].depositUsdtValue += msg.value * getPrice();//累计存入usdt价值
         emit Deposit(user, msg.value);
         return true;
     }
@@ -85,6 +88,7 @@ contract super_node {
         msg.sender.transfer(qki);
         totalSupply -= stake;//销毁stake
         users[msg.sender].withdraw += qki;//累计提现qki数量
+        users[msg.sender].withdrawtUsdtValue += qki * getPrice();//累计提现usdt价值
         Withdrawal(msg.sender, qki);
     }
     
@@ -100,6 +104,7 @@ contract super_node {
         totalSupply -= stake;//销毁stake
         (bool success,  ) = address(next_pool).call{value:qki}(abi.encodeWithSignature("deposit(address)", msg.sender));
         users[msg.sender].withdraw += qki;//累计提现qki数量
+        users[msg.sender].withdrawtUsdtValue += qki * getPrice();//累计提现usdt价值
         emit upgraded(msg.sender,qki);
         return success;
     }

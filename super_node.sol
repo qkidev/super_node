@@ -27,8 +27,8 @@ contract super_node {
     
     address public pair = 0x482284801BC4f44eb0912FBb4f6Dff8815322145;
 
-    event  Deposit(address indexed dst, uint wad);
-    event  Withdrawal(address indexed src, uint wad);
+    event Deposit(address indexed dst, uint wad);
+    event Withdrawal(address indexed src, uint wad);
     event Received(address, uint);
     event upgraded(address, uint);
 

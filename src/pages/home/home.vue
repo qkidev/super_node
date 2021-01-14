@@ -6,7 +6,7 @@
       </div>
       <img :src="require('../../assets/logo1.png')" alt="" class="logo1" />
       <img :src="require('../../assets/logo2.png')" alt="" class="logo2" />
-      <div class="pool_bg flex_h_center_center mt_50 hugestInverseBoldTxt" @click="togglePoolShow = true">{{currPool}}U</div>
+      <div class="pool_bg flex_h_center_center mt_50 hugestInverseBoldTxt" @click="openTogglePool('togglePoolShow')">{{currPool.amount}}U</div>
       <div class="flex_h mt_15">
         <img :src="require('../../assets/toggle.png')" alt="" class="toggle_icon"/>
         <span class="smallestInverseTxt" style="opacity: 0.4">点击星球切换星球池</span>
@@ -57,7 +57,7 @@
     </div>
     <div class="fixed_bottom flex_v" v-else>
      <div class="flex_h_center_center">
-       <div class="store_btn flex_h_center_center smallerInverseTxt" @click="startPoolShow=true">开启你的星球池</div>
+       <div class="store_btn flex_h_center_center smallerInverseTxt" @click="openTogglePool('startPoolShow')">开启你的星球池</div>
      </div>
     </div>
 
@@ -72,7 +72,6 @@
           <div class="input-box space-between">
             <input type="text" class="input" value placeholder="请输入你存入数量" v-model="amount" />
             <div class="align-center">
-              <!-- <div class="text2">burn</div> -->
               <div class="line"></div>
               <div class="smallestBlackTxt">QKI</div>
             </div>
@@ -137,9 +136,9 @@
             <div class="bigFontThinTxt">选择星球池</div>
           </div>
           <div class="pool_list flex_h_between mt_65" style="flex-wrap: wrap; width: 100%">
-            <div :class="['pool_item', 'flex_h_center_center', currPool === item.amount ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index">
+            <div :class="['pool_item', 'flex_h_center_center', tempPool.amount === item.amount ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index" @click="tempPool = item">
               {{item.amount}}U 星球池
-              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="currPool === item.amount">
+              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="tempPool.amount === item.amount">
             </div>
           </div>
           <div class="submit_btn flex_h_center_center middleInverseTxt" @click="togglePool">
@@ -158,9 +157,9 @@
             <div class="bigFontThinTxt">选择星球池</div>
           </div>
           <div class="pool_list flex_h_between mt_65" style="flex-wrap: wrap; width: 100%">
-            <div :class="['pool_item', 'flex_h_center_center', currPool === item.amount ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index">
+            <div :class="['pool_item', 'flex_h_center_center', tempPool.amount === item.amount ? 'currItem' : '']" v-for="(item, index) in poolList" :key="index">
               {{item.amount}}U 星球池
-              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="currPool === item.amount">
+              <img :src="require('../../assets/cuttItem.png')" alt="" class="img" v-show="tempPool.amount === item.amount">
             </div>
           </div>
           <div class="input-box space-between" style="margin-top: 0">
@@ -196,9 +195,6 @@ export default {
       amount: '',
       storeAmount: '0.00',
       totalSupply: "0.00", // 全网通证总量
-      
-      power: "0", // 我的算力
-      level: 1,
       withDrawShow: false,
       bgShow: false,
       upgredeShow: false,
@@ -206,42 +202,21 @@ export default {
       togglePoolShow: false,
       startPoolShow: false,
       type: 1,
-      epoch: 86400, // 挖矿周期
-      inviteCount: "0", // 邀请的人数
-      // receiveTimestamp: 0, // 上次领取奖励的时间戳
-      receiveTime: "", // 上次领取奖励的时间
-      inviteAddress: "", // 已绑定邀请人地址
-      inviteAddressInput: "", // 输入邀请人的地址
-      rewardCount: 0, // 获取累计收益
-      incomeFlag: false, // 领取收益弹框
-      deadline: "", // 截止日期
-      hour: "00", // 时
-      minutes: "00", // 分
-      seconds: "00", // 秒
-      showBurnFlag: false, // 燃烧算力弹框
-      receiveAble: false, // 收益是否可以被领取
-      // amount: "", // 燃烧数量
-      expectAmount: 0, // 预估收益
-      decimals: 2, //精度
-
-      poolLevel: 5,
-      poolList: [{amount: 5, address: ''}, {amount: 100, address: ''}],
-      currPool: 5,
-      withdrawPrice: 0.00,
-      price: '0.00',
-      next_pool: '',
+      decimals: 18, //精度
+      poolList: [{amount: 5, address: '0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3'}, {amount: 10,address: ''}],
+      currPool: null,
+      withdrawPrice: 0.00, // 提现价格
+      price: '0.00', //
+      next_pool: '', // 下一个星球池地址
+      tempPool: null
     };
   },
   async created() {
     await this.getAddress();
-    // this.contractAddress = poolList[0].address
-    // var contract = new ethers.Contract(
-    //   this.contractAddress,
-    //   abi,
-    //   this.signer
-    // );
-    // this.contract = contract;
-    this.getContract()
+    // 第一次进入默认5u星球池
+    this.getContract(this.poolList[0].address);
+    this.currPool = this.poolList[0];
+    this.tempPool = this.poolList[0];
     await this.getDecimals();
     this.getTotalSupply();
     await this.getBalance();
@@ -253,9 +228,9 @@ export default {
   },
   mixins: [h5Copy, initEth, timeUtils, vertify],
   methods: {
-    show(num) {
-      this.type = num;
-      this.bgShow = true;
+    openTogglePool(keyName) {
+      this.tempPool = this.currPool;
+      this[keyName] = true
     },
     // 初始化合约
     getContract (address) {
@@ -350,6 +325,15 @@ export default {
         this.amount = '';
         Toast("提交请求成功，等待区块确认");
         await this.queryTransation(res.hash, () => {
+          if(type === 'upgrade') {
+            for(let i = 0, len = this.poolList.length; i < len; i++) {
+              if(this.next_pool.toLowerCase() === this.poolList[i].address.toLowerCase()) {
+                this.currPool = this.poolList[i];
+                this.tempPool = this.poolList[i];
+                this.getContract(this.poolList[i].address)
+              }
+            }
+          }
           this.getTotalSupply();
           this.getBalance();
           this.geUsers();
@@ -360,17 +344,13 @@ export default {
     },
     // 开启星球 TODO: 如何给所选星球存入数量
     async start() {
+      this.currPool = this.tempPool;
       this.dealOrder('start', 'startPoolShow')
     },
     // 切换星球
     async togglePool() {
-      this.contractAddress = this.currPool
-      var contract = new ethers.Contract(
-        this.contractAddress,
-        abi,
-        this.signer
-      );
-      this.contract = contract;
+      this.currPool = this.tempPool;
+      this.getContract(this.currPool.address)
       this.getTotalSupply();
       this.getBalance();
       this.geUsers();
@@ -378,6 +358,10 @@ export default {
     },
     // 升级星球
     async upgrade() {
+      if(this.next_pool === ethers.constants.AddressZero){
+        Toast('还未达到升级下一星球条件')
+        return;
+      }
       this.dealOrder('upgrade', 'upgredeShow')
     },
     // 存入
@@ -386,6 +370,10 @@ export default {
     },
     // 提现
     async withDraw() {
+      if(this.next_pool === ethers.constants.AddressZero){
+        Toast('还未达到提现条件')
+        return;
+      }
       this.dealOrder('withdraw', 'withDrawShow')
     },
     // 十六进制转10进制
@@ -441,21 +429,6 @@ export default {
       this.active = num;
     }
   },
-  watch: {
-    power(newPower) {
-      if (newPower < 500) {
-        this.level = 1;
-      } else if (newPower < 5000) {
-        this.level = 2;
-      } else if (newPower < 10000) {
-        this.level = 3;
-      } else if (newPower < 20000) {
-        this.level = 4;
-      } else {
-        this.level = 5;
-      }
-    },
-  }
 };
 </script>
 

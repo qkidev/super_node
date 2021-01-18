@@ -89,7 +89,7 @@ contract super_node {
         totalSupply -= stake;//销毁stake
         users[msg.sender].withdraw += qki;//累计提现qki数量
         users[msg.sender].withdrawtUsdtValue += qki * getPrice();//累计提现usdt价值
-        Withdrawal(msg.sender, qki);
+        emit Withdrawal(msg.sender, qki);
     }
     
     //升级到下一个池子

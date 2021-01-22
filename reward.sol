@@ -9,7 +9,7 @@ contract master_node{
     mapping (address => uint) public  Weights;
     address[] public  master_nodes;
     
-    address public owner;
+    address payable public owner;
     
     
     event  Withdrawal(address indexed src, uint wad);
@@ -63,9 +63,15 @@ contract master_node{
     }
 
     
-    function setOwner(address new_owner) public {
+    function setOwner(address payable new_owner) public {
         require(msg.sender == owner);
         owner = new_owner;
     }
 
+
+    // 未分红的部分可以提出去
+	function withdraw() public {
+        require(msg.sender == owner);
+		owner.transfer(address(this).balance);
+	}
 }

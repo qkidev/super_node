@@ -34,7 +34,7 @@ contract reward{
         for(uint i;i<master_nodes.length;i++)
         {
             //每个节点应该分配的qki=本次分红*（节点qki余额*权重/总权重）
-            qki = msg.value *    address(master_nodes[i]).balance * Weights[master_nodes[i]] / total_weight;
+            qki = msg.value * address(master_nodes[i]).balance * Weights[master_nodes[i]] / total_weight;
             (bool success,  ) = address(master_nodes[i]).call{value:qki}(abi.encodeWithSignature("reward()", msg.sender));
         }
     }

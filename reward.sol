@@ -3,7 +3,7 @@
  * 超级节点自动分红，把转入的qki，按多个节点的权重进行分配
  */
 pragma solidity  ^0.7.6;
-contract master_node{
+contract reward{
     
     mapping (address => uint) public  balanceOf;
     mapping (address => uint) public  Weights;

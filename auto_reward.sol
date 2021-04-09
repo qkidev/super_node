@@ -49,5 +49,9 @@ contract auto_reward{
         require(new_max_reward >= 10e18);
         max_reward = new_max_reward;
     }
+     function set_new_reward(address payable new_reward) public {
+        require(msg.sender == owner);
+        reward =new_reward;
+    }
 
 }

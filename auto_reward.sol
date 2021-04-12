@@ -30,7 +30,7 @@ contract auto_reward{
             send_reward = max_reward;
         reward_address.transfer(send_reward);
         
-        (bool success,  ) = reward_address.call{value:send_reward}(abi.encodeWithSignature("deposit()"));
+        reward_address.call{value:send_reward}(abi.encodeWithSignature("deposit()"));
 
         last_time = block.timestamp;
     }

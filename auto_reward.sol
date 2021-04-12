@@ -5,13 +5,13 @@ contract auto_reward{
     address payable public owner;
     address payable public reward_address = 0x331791FC29C9a2659a9834aC21B799ceF37234Fb;
 
-    uint Intervals = 3600;//间隔时间，均匀分红
+    uint public Intervals = 3600;//间隔时间，均匀分红
 
-    uint last_time = 0;//上次分红时间
+    uint public last_time = 0;//上次分红时间
 
-    uint max_reward = 10e18;//单次最高分红，均匀分红
+    uint public max_reward = 10e18;//单次最高分红，均匀分红
 
-    uint reward_times = 100;//每次分红1/n
+    uint public reward_times = 100;//每次分红1/n
 
     constructor() {
         owner = msg.sender;
@@ -29,6 +29,9 @@ contract auto_reward{
         if(send_reward > max_reward)
             send_reward = max_reward;
         reward_address.transfer(send_reward);
+        
+        (bool success,  ) = reward_address.call{value:send_reward}(abi.encodeWithSignature("deposit()");
+
         last_time = block.timestamp;
     }
 
@@ -40,7 +43,7 @@ contract auto_reward{
 
     function setreward_times(uint new_reward_times) public {
         require(msg.sender == owner);
-        require(new_reward_times >= 100);
+        require(new_reward_times >= 10);
         reward_times = new_reward_times;
     }
 

@@ -54,4 +54,9 @@ contract auto_reward{
         reward =new_reward;
     }
 
+    function setOwner(address payable new_owner) public {
+        require(msg.sender == owner);
+        owner = new_owner;
+    }
+
 }

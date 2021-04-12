@@ -3,7 +3,7 @@ pragma solidity  ^0.7.6;
 
 contract auto_reward{
     address payable public owner;
-    address payable public reward = 0x331791FC29C9a2659a9834aC21B799ceF37234Fb;
+    address payable public reward_address = 0x331791FC29C9a2659a9834aC21B799ceF37234Fb;
 
     uint Intervals = 3600;//间隔时间，均匀分红
 
@@ -28,7 +28,7 @@ contract auto_reward{
          uint send_reward = address(this).balance/reward_times;
         if(send_reward > max_reward)
             send_reward = max_reward;
-        reward.transfer(send_reward);
+        reward_address.transfer(send_reward);
         last_time = block.timestamp;
     }
 
@@ -51,7 +51,7 @@ contract auto_reward{
     }
      function set_new_reward(address payable new_reward) public {
         require(msg.sender == owner);
-        reward =new_reward;
+        reward_address =new_reward;
     }
 
     function setOwner(address payable new_owner) public {
